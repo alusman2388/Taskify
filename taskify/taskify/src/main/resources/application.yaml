@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: taskify
+  data:
+    mongodb:
+      uri: mongodb+srv://sa:pasha@cluster0.fp5lcdy.mongodb.net/?retryWrites=true&w=majority&tls=true&appName=Cluster0
+      database: taskify
+      auto-index-creation: true		   
