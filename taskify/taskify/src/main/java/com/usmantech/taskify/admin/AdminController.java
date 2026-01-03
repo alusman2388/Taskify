@@ -17,14 +17,19 @@ import com.usmantech.taskify.DTO.UserResponseDTO;
 import com.usmantech.taskify.user.User;
 import com.usmantech.taskify.user.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/admin")
+@Tag(name = "Admin API's")
 public class AdminController {
 	
 	@Autowired
 	private UserService userService;
 	
 	@PostMapping
+	@Operation(summary = "Add new Admin")
 	public ResponseEntity<?> addNewAdmin(@RequestPart("user") UserDTO user,
 			@RequestPart(value= "photo",required = false) MultipartFile photo){
 		try {
@@ -36,6 +41,7 @@ public class AdminController {
 		}
 	}
 	@GetMapping("/get-all-users")
+	@Operation(summary = "Get all users")
 	public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
 		try {
 			List<UserResponseDTO> user=userService.getAllUsers();

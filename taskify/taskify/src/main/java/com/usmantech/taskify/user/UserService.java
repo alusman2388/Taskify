@@ -122,6 +122,5 @@ public class UserService {
 		    } catch (IOException e) {
 		        throw new FileStorageException("File upload failed"+e);
 		    }
-		}
-	
+		}	
 }

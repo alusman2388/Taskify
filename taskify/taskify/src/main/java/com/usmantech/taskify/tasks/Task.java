@@ -27,9 +27,6 @@ public class Task {
     private String status;     // TODO, IN_PROGRESS, DONE
     private String priority;   // LOW, MEDIUM, HIGH
     private LocalDate dueDate;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt; 
-	
-
 }

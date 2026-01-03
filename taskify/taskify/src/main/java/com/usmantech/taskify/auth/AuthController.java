@@ -19,11 +19,14 @@ import com.usmantech.taskify.DTO.UserDTO;
 import com.usmantech.taskify.user.User;
 import com.usmantech.taskify.user.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/auth")
 @Slf4j
+@Tag(name = "Auth API's")
 public class AuthController {
 	
 	@Autowired
@@ -39,11 +42,13 @@ public class AuthController {
 	private AuthenticationManager authenticationManager;
 	
 	@GetMapping("/health-ckeck")
+	@Operation(summary = "Checking health of API server is working or not")
 	public String healthCheck() {
 		return "Working fine ---> Ok";
 	}
 	
 	@PostMapping("/sign-up")
+	@Operation(summary = "Create new user")
 	public ResponseEntity<?> addNewUser(@RequestPart("user") UserDTO user,
 	        @RequestPart(required = false) MultipartFile photo) {
 		try {
@@ -55,6 +60,7 @@ public class AuthController {
 	    
 	}
 	@PostMapping("/log-in")
+	@Operation(summary = "LogIn")
 	public ResponseEntity<String> logIn(@RequestBody LoginDTO user) {
 		try {
 			authenticationManager.authenticate(

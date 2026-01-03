@@ -1,5 +1,7 @@
 package com.usmantech.taskify.DTO;
 
+import javax.validation.constraints.NotEmpty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
+	@NotEmpty
 	private String userName;
+	@NotEmpty
 	private String password;
 	private String email;
-	
-
 }

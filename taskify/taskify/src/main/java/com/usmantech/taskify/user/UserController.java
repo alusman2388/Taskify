@@ -14,14 +14,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.usmantech.taskify.DTO.UserDTO;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/user")
+@Tag(name = "User API's")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
 	
 	@PutMapping
+	@Operation(summary = "Update user")
 	public ResponseEntity<?> updateUser(@RequestPart UserDTO user,
 			@RequestPart(required = false) MultipartFile file) {
 		try {
@@ -29,20 +34,18 @@ public class UserController {
 		 return new ResponseEntity<>("Updated successfully", HttpStatus.OK);
 		 } catch (Exception e) {
 		        throw new RuntimeException("Failed to update user data", e);
-		    }
+		 }
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteUser(@PathVariable ObjectId id){
+	@Operation(summary = "Delete user")
+	public ResponseEntity<?> deleteUser(@PathVariable String id){
 		try {
-		userService.deleteUser(id);	
+		ObjectId objId= new ObjectId(id);
+		userService.deleteUser(objId);	
 		return new ResponseEntity<>("Deleted successfully",HttpStatus.OK);
 		} catch (Exception e) {
 			throw new RuntimeException("Unable to delete user",e);
 		}
 	}
-	
-	
-	
-
 }

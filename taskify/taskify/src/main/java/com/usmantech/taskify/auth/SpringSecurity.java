@@ -17,30 +17,41 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
  public class SpringSecurity extends WebSecurityConfigurerAdapter {
+	
 	@Autowired
 	private UserDetailsServiceImp userDetailsServiceImp;
+	
 	@Autowired
 	private JWTFilter jwtFilter;
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
+		.antMatchers(
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/v3/api-docs",
+                "/swagger-resources/**",
+                "/webjars/**"
+        ).permitAll()
 		.antMatchers("/auth/**").permitAll()
 		.anyRequest().authenticated();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and().csrf().disable();
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
 	}
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsServiceImp).passwordEncoder(passwordEncoder());
-		
+		auth.userDetailsService(userDetailsServiceImp).passwordEncoder(passwordEncoder());	
 	}
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
