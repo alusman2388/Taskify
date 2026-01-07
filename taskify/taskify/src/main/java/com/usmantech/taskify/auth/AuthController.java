@@ -2,6 +2,7 @@ package com.usmantech.taskify.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usmantech.taskify.DTO.LoginDTO;
 import com.usmantech.taskify.DTO.UserDTO;
-import com.usmantech.taskify.user.User;
 import com.usmantech.taskify.user.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,13 +48,14 @@ public class AuthController {
 		return "Working fine ---> Ok";
 	}
 	
-	@PostMapping("/sign-up")
+	@PostMapping(value = "/sign-up",
+		    consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "Create new user")
-	public ResponseEntity<?> addNewUser(@RequestPart("user") UserDTO user,
+	public ResponseEntity<?> addNewUser(@RequestPart("user") String userJson,
 	        @RequestPart(required = false) MultipartFile photo) {
 		try {
-			User entity = userService.addNewUser(user, photo);
-		    return new ResponseEntity<>(entity, HttpStatus.CREATED);
+	        UserDTO user = new ObjectMapper().readValue(userJson, UserDTO.class);
+		    return new ResponseEntity<>(userService.addNewUser(user, photo), HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>("User already exist",HttpStatus.BAD_REQUEST);
 		}

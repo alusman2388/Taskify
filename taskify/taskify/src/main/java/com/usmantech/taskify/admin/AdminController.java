@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usmantech.taskify.DTO.UserDTO;
 import com.usmantech.taskify.DTO.UserResponseDTO;
-import com.usmantech.taskify.user.User;
 import com.usmantech.taskify.user.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,13 +29,13 @@ public class AdminController {
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping
+	@PostMapping(value = "create-admin",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "Add new Admin")
-	public ResponseEntity<?> addNewAdmin(@RequestPart("user") UserDTO user,
+	public ResponseEntity<?> addNewAdmin(@RequestPart("user") String userJson,
 			@RequestPart(value= "photo",required = false) MultipartFile photo){
 		try {
-			User entity = userService.addNewAdmin(user, photo);
-			return new ResponseEntity<>(entity,HttpStatus.CREATED);
+			UserDTO user=new ObjectMapper().readValue(userJson, UserDTO.class);
+			return new ResponseEntity<>(userService.addNewAdmin(user, photo),HttpStatus.CREATED);
 			
 		} catch (Exception e) {
 			return new ResponseEntity<>("User already exist",HttpStatus.BAD_REQUEST);
@@ -43,12 +44,8 @@ public class AdminController {
 	@GetMapping("/get-all-users")
 	@Operation(summary = "Get all users")
 	public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
-		try {
-			List<UserResponseDTO> user=userService.getAllUsers();
-			return new ResponseEntity<>(user, HttpStatus.OK);
-		} catch (Exception e) {
-			throw new RuntimeException("No user found");		
-			}
+			return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+		
 	}
 
 }

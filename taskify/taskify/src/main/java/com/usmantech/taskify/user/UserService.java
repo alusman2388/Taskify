@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.usmantech.taskify.DTO.UserDTO;
@@ -37,9 +38,8 @@ public class UserService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	
-	public User addNewUser(UserDTO userdto,MultipartFile file) {
-		try {
+	@Transactional
+	public UserResponseDTO addNewUser(UserDTO userdto,MultipartFile file) {
 			User user=new User();
 			user.setUserName(userdto.getUserName());
 			user.setPassword(PASSWORD_ENCODER.encode(userdto.getPassword()));
@@ -48,32 +48,22 @@ public class UserService {
 			if(file!=null &&!file.isEmpty()) {
 	            user.setPhoto(storeFile(file));            
 			}
-			return userRepository.save(user);		
-		}  catch (Exception e) {
-	        log.error("Failed to add user", e);
-	        throw new RuntimeException("Failed to add user");
-	    }
-	}
-	public void addUser(User user) {
-		userRepository.save(user);
+			return modelMapper.map(userRepository.save(user), UserResponseDTO.class);			
 	}
 	
-	public User addNewAdmin(UserDTO userdto,MultipartFile file) {
-		try {
+	public UserResponseDTO addNewAdmin(UserDTO userdto,MultipartFile file) {
 			User user=new User();
 			user.setUserName(userdto.getUserName());
 			user.setPassword(PASSWORD_ENCODER.encode(userdto.getPassword()));
-			user.setEmail(userdto.getEmail());			user.setRoles(Arrays.asList("USER","ADMIN"));
+			user.setEmail(userdto.getEmail());			
+			user.setRoles(Arrays.asList("USER","ADMIN"));
 			if(file!=null &&!file.isEmpty() ) {
 	            user.setPhoto(storeFile(file));
 			}
-			return userRepository.save(user);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to add admin");
-		}	
+			return modelMapper.map(userRepository.save(user), UserResponseDTO.class);		
 	}
 	
-	 public User getUserByUserName(String userName) { 
+	 public User findByUserName(String userName) { 
 			return userRepository.findByUserName(userName)
 					.orElseThrow(()->new ResourceNotFoundException("User not found"));
 		
@@ -95,7 +85,7 @@ public class UserService {
 	 
 	 public void UpdateUser(UserDTO user, MultipartFile file) {
 				String userName=SecurityContextHolder.getContext().getAuthentication().getName();
-				User oldUser=getUserByUserName(userName);
+				User oldUser=findByUserName(userName);
 				oldUser.setUserName(user.getUserName());
 				  // Update password ONLY if provided
 			    if (user.getPassword() != null &&

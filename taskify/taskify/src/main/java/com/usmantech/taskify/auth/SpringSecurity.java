@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @SuppressWarnings("deprecation")
+@EnableMethodSecurity
 @Configuration
 @EnableWebSecurity
  public class SpringSecurity extends WebSecurityConfigurerAdapter {
@@ -36,6 +38,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
                 "/webjars/**"
         ).permitAll()
 		.antMatchers("/auth/**").permitAll()
+		.antMatchers("/admin/**").hasRole("ADMIN")
 		.anyRequest().authenticated();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and().csrf().disable();

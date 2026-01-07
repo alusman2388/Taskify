@@ -31,5 +31,4 @@ public class GlobalException {
 		log.error("Unxcepted error",ex);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Some thing went wrong");
 	}
-
 }

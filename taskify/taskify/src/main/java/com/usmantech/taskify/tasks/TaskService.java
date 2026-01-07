@@ -30,14 +30,13 @@ public class TaskService {
 	@Transactional
 	public TaskResponseDTO createTask(TaskDTO taskDTO,String userName) {
 		try {
-			User user=userRepository.findByUserName(userName)
-					.orElseThrow(() -> new RuntimeException("User not found"));;
+			User user=userService.findByUserName(userName);
 			Task task=modelMapper.map(taskDTO,Task.class);
 			task.setCreatedAt(LocalDateTime.now());
 			task.setUpdatedAt(LocalDateTime.now());
 			Task savedTask=taskRepository.save(task);
 			user.getTasks().add(savedTask);
-			userService.addUser(user);
+			userRepository.save(user);
 			return modelMapper.map(savedTask,TaskResponseDTO.class);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create task");
@@ -62,8 +61,7 @@ public class TaskService {
 	}
 	@Transactional
 	public void deleteTask(ObjectId id,String userName) {
-				User user=userRepository.findByUserName(userName)
-						.orElseThrow(() -> new RuntimeException("User not found"));;
+				User user=userService.findByUserName(userName);
 				 taskRepository.findById(id)
 						.orElseThrow(()->new ResourceNotFoundException("Task not Found"));
 				user.getTasks().removeIf(i->i.getId().equals(id));
