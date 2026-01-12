@@ -40,9 +40,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 		.antMatchers("/auth/**").permitAll()
 		.antMatchers("/admin/**").hasRole("ADMIN")
 		.anyRequest().authenticated();
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		http.cors().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and().csrf().disable();
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+		
 	}
 	
 	@Override
